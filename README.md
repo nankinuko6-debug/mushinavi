@@ -1,2 +1,0 @@
-# mushinavi
-mushinavi
