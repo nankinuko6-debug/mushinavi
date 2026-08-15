@@ -1,66 +1,391 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#111827">
-<title>ムシナビ | 蜂・マダニが心配なときに</title>
-<meta name="description" content="蜂・マダニが心配なときに、写真と質問から危険度と対処の目安を確認するムシナビ。">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ムシナビ | この虫、危ない？刺されたかも？</title>
+    <style>
+        :root {
+            --primary: #1d3557;
+            --danger: #e63946;
+            --warning: #f4a261;
+            --safe: #2a9d8f;
+            --gray-bg: #f8f9fa;
+            --text-main: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--gray-bg);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 18px 15px;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+        header p { margin: 5px 0 0; font-size: 13px; opacity: 0.9; }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        /* ボタン群 */
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        
+        button, .btn {
+            display: block;
+            width: 100%;
+            padding: 14px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+            box-sizing: border-box;
+        }
+        button:active, .btn:active { transform: scale(0.98); }
+
+        .btn-main { background-color: var(--primary); color: white; }
+        .btn-bee { background-color: #ffb703; color: #000; }
+        .btn-tick { background-color: #e63946; color: white; }
+        .btn-secondary { background-color: #e9ecef; color: #495057; }
+
+        /* 質問フォーム */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: var(--primary); }
+        .radio-option {
+            display: block;
+            background: #f1f3f5;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .radio-option input { margin-right: 10px; }
+
+        /* 判定結果画面 */
+        .result-header { text-align: center; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
+        .result-title { font-size: 20px; font-weight: bold; color: var(--primary); }
+        
+        .badge-danger { background-color: #ffe3e3; color: var(--danger); border: 2px solid var(--danger); }
+        .badge-warning { background-color: #fff3bf; color: #d9480f; border: 2px solid var(--warning); }
+        .badge-safe { background-color: #e6fcf5; color: #0ca678; border: 2px solid var(--safe); }
+        
+        .risk-badge {
+            display: inline-block;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 8px 22px;
+            border-radius: 30px;
+            margin: 12px 0 5px;
+        }
+
+        .action-box {
+            background-color: #fff5f5;
+            border-left: 5px solid var(--danger);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .action-box h3 { margin: 0 0 10px; font-size: 16px; color: var(--danger); display: flex; align-items: center; gap: 5px; }
+        .action-box ul { margin: 0; padding-left: 20px; font-weight: bold; }
+        .action-box li { margin-bottom: 6px; }
+
+        .dont-box {
+            background-color: #f8f9fa;
+            border-left: 5px solid #6c757d;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .dont-box h3 { margin: 0 0 10px; font-size: 15px; color: #495057; }
+        .dont-box ul { margin: 0; padding-left: 20px; color: #495057; }
+
+        .disclaimer { font-size: 12px; color: #777; margin-top: 15px; line-height: 1.4; }
+
+        /* 非表示用 */
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-<header class="site-header"><div class="wrap header-inner">
-<a class="brand" href="#top"><span class="brand-mark">🐝</span><span>ムシナビ</span><small>v0.2</small></a>
-<nav><a href="#check">写真判定</a><a href="#map">目撃MAP</a><a href="#guides">対策</a></nav>
-</div></header>
-<main id="top">
-<section class="hero"><div class="wrap hero-grid">
-<div><p class="eyebrow">HACHI & MADANI</p>
-<h1>🐝 蜂・🕷️ マダニが<br><span>心配なときに。</span></h1>
-<p class="lead">「この虫、危ない？」「刺されたかも？」を、まず確認。写真と簡単な質問から、危険度と次に取る行動の目安を表示します。</p>
-<div class="hero-actions"><a class="btn primary" href="#check">📷 写真から調べる</a><a class="btn secondary" href="#map">📍 目撃MAPを見る</a></div>
-<p class="notice">※プロトタイプです。写真だけで種類や病気を確定するものではありません。危険を感じる場合は近づかず、適切な専門窓口へ相談してください。</p>
-</div>
-<div class="hero-card"><div class="hero-icons">🐝　🕷️</div><h3>2つに集中</h3><p>まずは「蜂」と「マダニ」に絞って、困った瞬間の判断をサポートします。</p><div class="mini"><b>蜂</b><span>巣・刺傷・危険度</span></div><div class="mini"><b>マダニ</b><span>付着・無理に取らない</span></div></div>
-</div></section>
 
-<section id="check" class="section"><div class="wrap">
-<div class="section-head"><div><p class="eyebrow">PHOTO CHECK</p><h2>蜂？ マダニ？ 写真から確認</h2></div><span class="step">STEP 1</span></div>
-<div class="choice-grid">
-<button class="type-card active" data-type="hachi" type="button"><span>🐝</span><b>蜂を調べる</b><small>巣・種類・危険度の目安</small></button>
-<button class="type-card" data-type="madani" type="button"><span>🕷️</span><b>マダニを調べる</b><small>付着しているかも？の確認</small></button>
-</div>
-<div class="panel">
-<label class="upload-box" for="photoInput"><input id="photoInput" type="file" accept="image/*" capture="environment"><span class="upload-icon">📷</span><strong>写真を選ぶ・撮る</strong><span>スマホのカメラでもOK</span></label>
-<div id="previewWrap" class="preview-wrap hidden"><img id="preview" alt="選択した写真"><button id="removePhoto" class="text-btn" type="button">写真を削除</button></div>
-<div id="hachiQuestions" class="questions">
-<label>見つけた場所<select id="hLocation"><option value="">選択してください</option><option>家の中</option><option>ベランダ・庭</option><option>公園・道路</option><option>山・森林</option><option>その他</option></select></label>
-<label>巣・集団を見ましたか？<select id="hNest"><option value="">選択してください</option><option value="yes">はい</option><option value="no">いいえ</option><option value="unknown">わからない</option></select></label>
-<label>蜂が近くを飛んでいますか？<select id="hNear"><option value="">選択してください</option><option value="yes">はい</option><option value="no">いいえ</option></select></label>
-</div>
-<div id="madaniQuestions" class="questions hidden">
-<label>見つけた場所<select id="mLocation"><option value="">選択してください</option><option>山・森林</option><option>草むら・公園</option><option>庭・畑</option><option>衣服・室内</option><option>その他</option></select></label>
-<label>皮膚・衣服に付着していますか？<select id="mAttached"><option value="">選択してください</option><option value="yes">はい</option><option value="no">いいえ</option><option value="unknown">わからない</option></select></label>
-<label>体に付いている場合、無理に引っ張りましたか？<select id="mPulled"><option value="">選択してください</option><option value="yes">はい</option><option value="no">いいえ</option><option value="na">付着していない</option></select></label>
-</div>
-<button id="diagnoseBtn" class="btn primary wide" type="button">🔎 確認する</button><p id="diagnoseMsg" class="form-msg" aria-live="polite"></p>
-</div>
-<div id="result" class="result hidden" aria-live="polite"><div class="result-top"><div><p class="eyebrow">RESULT</p><h3 id="resultTitle">確認結果</h3></div><span id="riskPill" class="pill">--</span></div>
-<div class="result-grid"><div><b>対象</b><p id="resultCandidate">--</p></div><div><b>危険度の目安</b><p id="resultRisk">--</p></div><div><b>まずやること</b><p id="resultAction">--</p></div><div><b>注意点</b><p id="resultCaution">--</p></div></div>
-<div id="resultEmergency" class="emergency hidden"></div>
-<div class="disclaimer">写真だけでは正確な同定はできません。刺傷・咬傷、強い症状、危険な巣などがある場合は自己判断で無理に対処せず、医療機関や専門業者など適切な窓口へ相談してください。</div></div>
-</div></section>
+    <header>
+        <h1>🐝🕷️ ムシナビ</h1>
+        <p>🐝 蜂・🕷️ マダニが心配なときに。</p>
+    </header>
 
-<section id="map" class="section alt"><div class="wrap"><div class="section-head"><div><p class="eyebrow">SIGHTING MAP</p><h2>蜂・マダニ 目撃MAP</h2></div><span class="step">STEP 2</span></div>
-<div class="map-layout"><div class="map-card"><div class="fake-map"><div class="map-grid"></div><span class="marker m1" title="大阪・蜂">🐝</span><span class="marker m2" title="大阪・マダニ">🕷️</span><span class="marker m3" title="京都・蜂">🐝</span><span class="marker m4" title="奈良・マダニ">🕷️</span><div class="map-label osaka">大阪</div><div class="map-label kyoto">京都</div><div class="map-label nara">奈良</div></div><p class="map-note">v0.2ではデモ地点です。実運用では位置情報の扱い・投稿内容の確認・個人情報保護が必要です。</p></div>
-<div class="panel"><h3>目撃情報を投稿</h3><label>対象<select id="sightingType"><option>蜂</option><option>マダニ</option></select></label><label>地域（市区町村まで）<input id="sightingArea" type="text" placeholder="例：大阪市北区"></label><label>ひとこと<textarea id="sightingNote" rows="3" placeholder="例：公園の草むらで見かけました"></textarea></label><button id="postSighting" class="btn primary wide" type="button">📍 目撃情報を追加</button><p id="postMsg" class="form-msg" aria-live="polite"></p></div></div>
-</div></section>
+    <div class="container">
 
-<section id="guides" class="section"><div class="wrap"><div class="section-head"><div><p class="eyebrow">QUICK GUIDES</p><h2>困ったときの基本</h2></div></div>
-<div class="guide-grid"><article><span>🐝</span><h3>蜂を見つけたら</h3><p>近づいたり刺激したりせず、巣が疑われる場合は安全な距離を確保。</p></article>
-<article><span>🏠</span><h3>蜂の巣がある</h3><p>自分で刺激せず、人やペットを近づけない。必要なら専門業者へ相談。</p></article>
-<article><span>🕷️</span><h3>マダニが付着？</h3><p>無理に引っ張って取ろうとせず、付着が疑われる場合は医療機関への相談を検討。</p></article>
-<article><span>🌿</span><h3>外出後の確認</h3><p>草むら・森林などから帰ったら、衣服や皮膚に虫が付いていないか確認。</p></article></div></div></section>
-</main>
-<footer><div class="wrap footer-inner"><div><b>🐝 ムシナビ</b><p>蜂・マダニが心配なときの最初の確認場所。</p></div><small>v0.2 Prototype</small></div></footer>
-<script src="app.js"></script>
-</body></html>
+        <!-- ① トップ画面 -->
+        <div id="screen-top" class="card">
+            <h2 style="font-size: 18px; margin-top: 0; text-align: center; color: var(--primary);">この虫、危ない？ 刺されたかも？</h2>
+            <p style="font-size: 13px; color: #666; text-align: center; margin-bottom: 20px;">
+                写真と簡単な質問から「危険度」と「今やること」を確認できます。
+            </p>
+
+            <div class="btn-group">
+                <button class="btn-main" onclick="startCheck('photo')">📷 写真から確認</button>
+                <button class="btn-bee" onclick="startCheck('bee')">🐝 蜂について調べる</button>
+                <button class="btn-tick" onclick="startCheck('tick')">🕷️ マダニについて調べる</button>
+            </div>
+
+            <p style="text-align: center; font-size: 11px; color: #aaa; margin-top: 20px; margin-bottom: 0;">※目撃MAP機能は今後アップデートで実装予定です</p>
+        </div>
+
+        <!-- ② 蜂の判定質問画面 -->
+        <div id="screen-bee-q" class="card hidden">
+            <h2 style="font-size: 17px; margin-top: 0; color: var(--primary);">🐝 蜂の状況確認</h2>
+
+            <div class="form-group">
+                <label>Q1. どこで見つけましたか？</label>
+                <label class="radio-option"><input type="radio" name="bee_loc" value="home" checked> 家の中・ベランダ</label>
+                <label class="radio-option"><input type="radio" name="bee_loc" value="garden"> 庭・敷地内</label>
+                <label class="radio-option"><input type="radio" name="bee_loc" value="outdoor"> 山・公園・屋外</label>
+            </div>
+
+            <div class="form-group">
+                <label>Q2. 巣や集団（複数匹）を見ましたか？</label>
+                <label class="radio-option"><input type="radio" name="bee_nest" value="yes"> 見た（巣がある／たくさん飛んでいる）</label>
+                <label class="radio-option"><input type="radio" name="bee_nest" value="no" checked> 見ていない（1匹だけ／見当たらない）</label>
+                <label class="radio-option"><input type="radio" name="bee_nest" value="unknown"> わからない</label>
+            </div>
+
+            <div class="form-group">
+                <label>Q3. 近くを飛び回っていますか？</label>
+                <label class="radio-option"><input type="radio" name="bee_fly" value="yes"> はい（カチカチ音や執拗につきまとわれる）</label>
+                <label class="radio-option"><input type="radio" name="bee_fly" value="no" checked> いいえ</label>
+            </div>
+
+            <button class="btn-main" onclick="calcBeeResult()">🔎 確認結果を見る</button>
+            <button class="btn-secondary" onclick="goTop()" style="margin-top: 10px;">戻る</button>
+        </div>
+
+        <!-- ③ マダニの判定質問画面 -->
+        <div id="screen-tick-q" class="card hidden">
+            <h2 style="font-size: 17px; margin-top: 0; color: var(--primary);">🕷️ マダニの状況確認</h2>
+
+            <div class="form-group">
+                <label>Q1. マダニの状態はどうなっていますか？</label>
+                <label class="radio-option"><input type="radio" name="tick_status" value="attached" checked> 皮膚についている（刺さっている・吸血中）</label>
+                <label class="radio-option"><input type="radio" name="tick_status" value="clothes"> 服の上などを歩いている（まだついていない）</label>
+                <label class="radio-option"><input type="radio" name="tick_status" value="bitten"> すでに自分で引き抜いた／噛まれた痕がある</label>
+            </div>
+
+            <button class="btn-main" onclick="calcTickResult()">🔎 確認結果を見る</button>
+            <button class="btn-secondary" onclick="goTop()" style="margin-top: 10px;">戻る</button>
+        </div>
+
+        <!-- ④ 判定結果画面（最重要） -->
+        <div id="screen-result" class="card hidden">
+            <div class="result-header">
+                <div style="font-size: 12px; color: #888; font-weight: bold;">━━━━━━━━━━━━━━<br>🔎 確認結果<br>━━━━━━━━━━━━━━</div>
+                <div class="result-title" id="res-target-title" style="margin-top: 5px;">🐝 蜂の可能性</div>
+                <div id="res-risk-badge" class="risk-badge badge-danger">🔴 高</div>
+            </div>
+
+            <!-- 最優先：⚠️ 今すぐやること -->
+            <div class="action-box">
+                <h3>⚠️ 今すぐやること</h3>
+                <ul id="res-actions"></ul>
+            </div>
+
+            <!-- 🚫 やってはいけないこと -->
+            <div class="dont-box">
+                <h3>🚫 やってはいけないこと</h3>
+                <ul id="res-donts"></ul>
+            </div>
+
+            <!-- 📚 詳細ページ導線 -->
+            <div style="margin-top: 20px;">
+                <p style="font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 8px;">📚 詳しく見る・次のステップ</p>
+                <div class="btn-group">
+                    <a href="guide.html" class="btn btn-main" id="res-guide-link">応急処置・対策グッズを見る</a>
+                    <button class="btn-secondary" onclick="goTop()">トップへ戻る</button>
+                </div>
+            </div>
+
+            <p class="disclaimer">※本判定は医療的な診断ではなく、行動の目安（危険度指標）を表示するものです。体調不良がある場合は速やかに医療機関を受診してください。</p>
+        </div>
+
+    </div>
+
+    <script>
+        // 画面切り替え処理
+        function hideAllScreens() {
+            document.getElementById('screen-top').classList.add('hidden');
+            document.getElementById('screen-bee-q').classList.add('hidden');
+            document.getElementById('screen-tick-q').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+        }
+
+        function goTop() {
+            hideAllScreens();
+            document.getElementById('screen-top').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function startCheck(type) {
+            hideAllScreens();
+            if (type === 'bee') {
+                document.getElementById('screen-bee-q').classList.remove('hidden');
+            } else if (type === 'tick') {
+                document.getElementById('screen-tick-q').classList.remove('hidden');
+            } else if (type === 'photo') {
+                alert("【📷 写真診断機能について】\n現在、条件分岐による安定判定（v0.3）を公開中です。AI自動解析は v0.4 で追加予定です。\nまずは下の「蜂」または「マダニ」ボタンから確認を行なってください！");
+                document.getElementById('screen-top').classList.remove('hidden');
+            }
+            window.scrollTo(0,0);
+        }
+
+        // 🐝 蜂の判定ロジック
+        function calcBeeResult() {
+            const nest = document.querySelector('input[name="bee_nest"]:checked').value;
+            const fly = document.querySelector('input[name="bee_fly"]:checked').value;
+
+            let risk = "high";
+            let actions = [];
+            let donts = [];
+
+            if (nest === 'yes' || fly === 'yes') {
+                // 🔴 高（巣がある・威嚇されている）
+                risk = "high";
+                actions = [
+                    "蜂から静かに距離をとる・離れる",
+                    "巣や集団を絶対に刺激しない",
+                    "人やペットをその場からすぐ離す"
+                ];
+                donts = [
+                    "巣に近づく・棒などで刺激する",
+                    "大声を出す・手を振り回して払う",
+                    "自分で無理に駆除しようとする"
+                ];
+            } else {
+                // 🟠 注意（単体・見かけた程度）
+                risk = "warn";
+                actions = [
+                    "不用意に触らず、ゆっくり距離を取る",
+                    "室内の場合は窓を開けて静かに退出を待つ",
+                    "周辺に巣がないか遠くから確認する"
+                ];
+                donts = [
+                    "素手や不慣れな状態で叩く・捕まえる",
+                    "急な動作で蜂を刺激する"
+                ];
+            }
+
+            renderResult("🐝 蜂の可能性", risk, actions, donts);
+        }
+
+        // 🕷️ マダニの判定ロジック（皮膚固着最優先）
+        function calcTickResult() {
+            const status = document.querySelector('input[name="tick_status"]:checked').value;
+
+            let risk = "high";
+            let actions = [];
+            let donts = [];
+
+            if (status === 'attached') {
+                // 🔴 高（皮膚についている）
+                risk = "high";
+                actions = [
+                    "無理に引っ張らない（頭部が皮膚に残るため）",
+                    "皮膚の状態を確認し、そのまま皮膚科等の医療機関へ",
+                    "ペットについている場合は動物病院へ相談"
+                ];
+                donts = [
+                    "手や普通のピンセットで強く引っこ抜く",
+                    "潰して体液に触れる",
+                    "アルコールや火で無理に取ろうとする"
+                ];
+            } else if (status === 'clothes') {
+                // 🟠 注意（服の上・まだ刺さっていない）
+                risk = "warn";
+                actions = [
+                    "ガムテープ等で静かに取り除く",
+                    "全身（脇・首元・関節裏など）に他のマダニがいないか確認",
+                    "着ていた服をすぐに洗濯・乾燥させる"
+                ];
+                donts = [
+                    "素手で直接潰す",
+                    "服を着たまま室内に入る"
+                ];
+            } else {
+                // 🟢 比較的低い（すでに離れた／刺された後）
+                risk = "safe";
+                actions = [
+                    "刺された部位を水と石鹸で綺麗に洗う",
+                    "今後数週間は発熱や発疹などの体調変化に注意する",
+                    "体調不良を感じたら速やかに医療機関を受診する"
+                ];
+                donts = [
+                    "患部を強く掻きむしる",
+                    "発熱などの変化を放置する"
+                ];
+            }
+
+            renderResult("🕷️ マダニの可能性", risk, actions, donts);
+        }
+
+        // 結果画面の描画処理
+        function renderResult(title, risk, actions, donts) {
+            hideAllScreens();
+            
+            document.getElementById('res-target-title').innerText = title;
+            
+            const badge = document.getElementById('res-risk-badge');
+            if (risk === "high") {
+                badge.className = "risk-badge badge-danger";
+                badge.innerText = "🔴 高（今は近づかない）";
+            } else if (risk === "warn") {
+                badge.className = "risk-badge badge-warning";
+                badge.innerText = "🟠 注意（不用意に触らない）";
+            } else {
+                badge.className = "risk-badge badge-safe";
+                badge.innerText = "🟢 比較的低い（距離を取って様子を見る）";
+            }
+
+            // 今すぐやること
+            const actionUl = document.getElementById('res-actions');
+            actionUl.innerHTML = "";
+            actions.forEach(act => {
+                const li = document.createElement('li');
+                li.innerText = act;
+                actionUl.appendChild(li);
+            });
+
+            // やってはいけないこと
+            const dontUl = document.getElementById('res-donts');
+            dontUl.innerHTML = "";
+            donts.forEach(d => {
+                const li = document.createElement('li');
+                li.innerText = d;
+                dontUl.appendChild(li);
+            });
+
+            document.getElementById('screen-result').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+    </script>
+</body>
+</html>
